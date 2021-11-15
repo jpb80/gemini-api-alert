@@ -10,16 +10,21 @@ import requests
 
 GEMINI_API_BASE_URL = "https://api.gemini.com"
 API_VERSION = "v2"
+DEBUG = 10
+INFO = 20
 
 log = logging.getLogger(__name__)
 
 
-def setup_logging(loglevel=10):
+def setup_logging(debug):
     """Setup basic logging
 
     Args:
       loglevel (int): minimum loglevel for emitting messages
     """
+    loglevel = INFO
+    if debug:
+        loglevel = DEBUG
     logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
     logging.basicConfig(level=loglevel, stream=sys.stdout,
                         format=logformat, datefmt="%Y-%m-%d %H:%M:%S")
@@ -281,8 +286,11 @@ def send_info(alert_type, message):
 @click.option('--symbol',
               type=str,
               required=True)
-def main(currency, alert_type, deviation, symbol):
-    setup_logging()
+@click.option('--debug',
+              type=bool,
+              required=False)
+def main(currency, alert_type, deviation, symbol, debug):
+    setup_logging(debug)
     log.debug("Currency: %s, type: %s, deviation: %s", currency, alert_type, deviation)
     deviation = deviation * 100
     if alert_type == "pricedev":
