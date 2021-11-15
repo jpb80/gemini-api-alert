@@ -11,6 +11,9 @@ Script will be run periodically by a monitoring tool, being called directly, gen
 #### Example of running the Price Change alert
 `python app.py --alert_type pricechange --deviation 0.05 --symbol btcusd`
 
+#### Debug Mode
+`python app.py --alert_type pricechange --deviation 0.05 --symbol btcusd --debug true`
+
 #### Script inputs
 - alert_type
     - pricechange
@@ -29,6 +32,7 @@ Script will be run periodically by a monitoring tool, being called directly, gen
 - Streamline the error handling - instead of various different ways to handle exceptions.
 
 ## Future Additions
+- Create a Dockerfile to build container with the python version and dependencies. Use `ENTRYPOINT ['python','./app.py']` then pass arguments to the script when container is started such as `docker run -it --rm scriptimagename --alert_type pricechange --deviation 0.05 --symbol btcusd`.
 - Break up the single python file. Use modules for the alerts. For example have an alerts/pricechange.py module that is imported into the app.py script. It would be cleaner approach to adding new alerts to the script.
 - How would this run for multiple symbols?
     - Add an 'all' script argument for using all symbols.
