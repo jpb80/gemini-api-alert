@@ -1,29 +1,35 @@
 # Gemini Challenge - Alerting Script
+## About
+Script will be run periodically by a monitoring tool, being called directly, generating alerts as output that will feed into an alerting mechanism.
 
 ## Pre-requisites 
-- Required: Python3 and pip installed
+- Required: install python 3.4.X and pip
 - Optional: use virutalenv to install dependencies.  `python -m venv venv` then active the virtualenv `. venv/bin/activate`.
-- Required: install the requirments.txt dependecies.  `pip install -r requirements.txt`
+- Required: install the requirements.txt dependecies.  `pip install -r requirements.txt`
 
 ## Run 
-- `python app.py --help` to view the possible arguments
-- Example of running the Price Change alert: `python app.py --alert_type pricechange --deviation 0.05 --symbol btcusd`
-- Alert Types
+#### Example of running the Price Change alert
+`python app.py --alert_type pricechange --deviation 0.05 --symbol btcusd`
+
+#### Script inputs
+- alert_type
     - pricechange
     - pricedev
     - voldev
     - all 
-- Deviations are in float for percentages. `5% == 0.05`
+- deviation
+    - Decimal: `0.05 == 5%`
+    - Threshold at which the alert will be triggered for pricedev and voldev alert types. 
+- symbol
+    - Valid exchange currency symbols from the Gemini API symbols endpoint `https://api.gemini.com/v1/symbols`
 
-## Improvements
+## Known Issues
 - Not using click to provide set options for alert types. 
 - Missing unit tests. Ideally at the very least create tests for the calculation functions.
 - Streamline the error handling - instead of various different ways to handle exceptions.
 
 ## Future Additions
 - Break up the single python file. Use modules for the alerts. For example have an alerts/pricechange.py module that is imported into the app.py script. It would be cleaner approach to adding new alerts to the script.
-- Implement the currency argument to pass to the API endpoints. 
-- Implement unit testing using.
 - How would this run for multiple symbols?
     - Add an 'all' script argument for using all symbols.
     - Create a runner script or a loop that retrieves a list of all the symbols. Runner would incrementally call 'all' per symbol. One issue is hitting the API limitations.
@@ -31,6 +37,15 @@
 
 ## Misc
 ### Approach to solving
+#### Price Deviation
+1. Create functions to query the API.
+2. Parse those results as json.
+3. Get the current price from api response.
+4. Get the average from the array of price changes from api response.
+5. Get standard deviation of the array of price changes.
+6. Use the ZScore to determine how many deviations a current price is from the sample mean of prices in the last 24 hours.
+7. Alert when Zscore is +/-1 standard deviation from the mean.
+
 ### Issues during impmentation
 - I wasn't entirely clear on the implementation of the Volume Deviation alert requirements based on the description.
 - Understanding the volume data from the candles API.
